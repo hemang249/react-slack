@@ -17,6 +17,8 @@ class Register extends React.Component {
     email: "",
     password: "",
     passwordConfirmation: "",
+    errors: [],
+    loading: false,
   };
 
   handleChange = (event) => {
@@ -25,15 +27,81 @@ class Register extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then((user) => console.log(user))
-      .catch((err) => console.log(err));
+    this.setState({ errors: [], loading: true });
+    if (this.isFormValid()) {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then((user) => {
+          this.setState({ loading: false });
+        })
+        .catch((err) => {
+          this.setState({
+            errors: this.state.errors.concat(err),
+            loading: false,
+          });
+          console.log(err);
+        });
+    }
+  };
+
+  isFormValid = () => {
+    if (this.isFormEmpty(this.state)) {
+      this.setState({
+        errors: this.state.errors.concat({
+          message: "Please fillout all fields",
+        }),
+      });
+    } else if (
+      !this.isPasswordValid(
+        this.state.password,
+        this.state.passwordConfirmation
+      )
+    ) {
+    } else {
+      return true;
+    }
+  };
+
+  isFormEmpty = ({ email, username, password, passwordConfirmation }) => {
+    return (
+      !password.length ||
+      !passwordConfirmation.length ||
+      !username.length ||
+      !email.length
+    );
+  };
+
+  isPasswordValid = (password, passwordConfirmation) => {
+    if (password.length < 6) {
+      this.setState({
+        errors: this.state.errors.concat({
+          message: "Password must be 6 characters long",
+        }),
+      });
+      return false;
+    } else if (password !== passwordConfirmation) {
+      this.setState({
+        errors: this.state.errors.concat({ message: "Passwords donot match" }),
+      });
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  showErrors = () => {
+    return this.state.errors.map((err, i) => <p key={i}>{err.message}</p>);
   };
 
   render() {
-    const { username, email, password, passwordConfirmation } = this.state;
+    const {
+      username,
+      email,
+      password,
+      passwordConfirmation,
+      loading,
+    } = this.state;
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: "450px" }}>
@@ -44,7 +112,12 @@ class Register extends React.Component {
               Register for Klack
             </Icon>
           </Header>
-
+          {this.state.errors.length > 0 && (
+            <Message color="red">
+              <h4>Errors</h4>
+              {this.showErrors()}
+            </Message>
+          )}
           <Form size="large" onSubmit={this.handleSubmit}>
             <Segment stacked>
               <Form.Input
@@ -83,12 +156,18 @@ class Register extends React.Component {
                 name="passwordConfirmation"
                 icon="repeat"
                 iconPosition="left"
-                placeholder="password"
-                type="pasword"
+                placeholder="Password"
+                type="password"
                 onChange={this.handleChange}
               ></Form.Input>
 
-              <Button color="blue" fluid size="large">
+              <Button
+                disabled={loading}
+                className={loading ? "loading" : ""}
+                color="blue"
+                fluid
+                size="large"
+              >
                 Submit
               </Button>
             </Segment>
