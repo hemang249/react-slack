@@ -1,16 +1,12 @@
 import React, { Component } from "react";
-import { Grid, Header, Icon, Dropdown } from "semantic-ui-react";
+import { Grid, Header, Icon, Image, Dropdown } from "semantic-ui-react";
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 
 class UserPanel extends Component {
   state = {
-    user: null,
+    user: this.props.currentUser,
   };
-
-  componentDidMount() {
-    this.setState({ user: this.props.currentUser });
-  }
 
   handleSignout = () => {
     firebase
@@ -25,8 +21,7 @@ class UserPanel extends Component {
       key: "user",
       text: (
         <span>
-          Signed In as{" "}
-          <strong>{this.state.user && this.state.user.dislayName}</strong>{" "}
+          Signed In as <strong>{this.state.user.displayName}</strong>{" "}
         </span>
       ),
     },
@@ -58,7 +53,21 @@ class UserPanel extends Component {
 
           <Header style={{ padding: "0.24em" }} inverted as="h4">
             <Dropdown
-              trigger={<span>User</span>}
+              trigger={
+                <span style={{ paddingLeft: "4em" }}>
+                  {" "}
+                  <Image
+                    src={this.state.user.photoURL}
+                    spaced="right"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                    }}
+                  />{" "}
+                  {this.state.user.displayName}
+                </span>
+              }
               options={this.dropdownOptions()}
             />
           </Header>
