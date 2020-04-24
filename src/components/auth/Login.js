@@ -10,7 +10,6 @@ import {
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import firebase from "../../firebase";
-import md5 from "md5";
 
 class Login extends React.Component {
   state = {
