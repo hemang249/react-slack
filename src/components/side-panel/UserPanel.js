@@ -38,9 +38,9 @@ class UserPanel extends Component {
   ];
 
   render() {
-    console.log(this.state.user);
+    console.log(this.state);
     return (
-      <Grid style={{ background: "#0A79DF" }}>
+      <Grid style={{ background: "#2B2B52" }}>
         <Grid.Column>
           <Grid.Row style={{ paddingTop: "1.2em", margin: "0px" }}>
             <Header style={{ color: "white", textAlign: "center" }}>
