@@ -15,6 +15,10 @@ class Messages extends React.Component {
     user: null,
   };
 
+  componentWillUnmount() {
+    this.state.messagesRef.off();
+  }
+
   componentWillReceiveProps(nextProps) {
     this.setState(
       {
@@ -47,12 +51,13 @@ class Messages extends React.Component {
     });
   };
 
-  displayMessages = (messages) => {
-    return (
-      messages.length > 0 &&
+  displayMessages = (messages, channel) => {
+    return messages.length > 0 ? (
       messages.map((m) => (
         <Message key={m.timestamp} message={m} user={this.state.user} />
       ))
+    ) : (
+      <div>This is the beginning of Channel</div>
     );
   };
 
@@ -62,7 +67,10 @@ class Messages extends React.Component {
         <MessagesHeader />
         <Segment>
           <Comment.Group className="messages">
-            {this.displayMessages(this.state.messages)}
+            {this.displayMessages(
+              this.state.messages,
+              this.state.currentChannel
+            )}
           </Comment.Group>
         </Segment>
         <MessageForm messagesRef={this.state.messagesRef} />

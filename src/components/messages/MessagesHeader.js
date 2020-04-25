@@ -1,7 +1,16 @@
 import React, { Component } from "react";
 import { Header, Segment, Icon, Input } from "semantic-ui-react";
+import { connect } from "react-redux";
 
 class MessagesHeader extends Component {
+  state = {
+    currentChannel: "",
+  };
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ ...this.state, currentChannel: nextProps.currentChannel });
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -13,7 +22,8 @@ class MessagesHeader extends Component {
             style={{ marginBottom: 0 }}
           >
             <span>
-              Channel
+              {this.state.currentChannel &&
+                this.state.currentChannel.name.toUpperCase()}
               <Icon name="star outline" color="black" />
             </span>
 
@@ -33,4 +43,8 @@ class MessagesHeader extends Component {
   }
 }
 
-export default MessagesHeader;
+const mapStateToProps = (state) => ({
+  currentChannel: state.channel.currentChannel,
+});
+
+export default connect(mapStateToProps, {})(MessagesHeader);

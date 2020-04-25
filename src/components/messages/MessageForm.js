@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Segment, Input, Button } from "semantic-ui-react";
 import { connect } from "react-redux";
 import firebase from "../../firebase";
+import FileModal from "./FileModal";
 
 class MessageForm extends Component {
   state = {
@@ -11,6 +12,7 @@ class MessageForm extends Component {
     currentChannel: this.props.currentChannel,
     errors: [],
     messagesRef: this.props.messagesRef,
+    modal: false,
   };
 
   componentWillReceiveProps(nextProps) {
@@ -20,6 +22,9 @@ class MessageForm extends Component {
   handleChange = (event) => {
     this.setState({ ...this.state, [event.target.name]: event.target.value });
   };
+
+  openModal = () => this.setState({ ...this.state, modal: true });
+  closeModal = () => this.setState({ ...this.state, modal: false });
 
   sendMessage = () => {
     const { messagesRef, message, currentChannel } = this.state;
@@ -50,9 +55,8 @@ class MessageForm extends Component {
     }
   };
 
-  createMessage = () => {
+  createMessage = (url) => {
     const message = {
-      content: this.state.message,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       user: {
         id: this.state.user.uid,
@@ -60,7 +64,22 @@ class MessageForm extends Component {
         photoURL: this.state.user.photoURL,
       },
     };
+
+    if (url) {
+      message["image"] = url;
+    } else {
+      message.content = this.state.message;
+    }
     return message;
+  };
+
+  sendFileMessage = (url, ref, pathToUpload) => {
+    ref
+      .child(pathToUpload)
+      .push()
+      .set(this.createMessage(url))
+      .then(() => console.log("upload done"))
+      .catch((err) => console.log(err));
   };
 
   render() {
@@ -91,10 +110,17 @@ class MessageForm extends Component {
               labelPosition="left"
             />
             <Button
+              onClick={this.openModal}
               color="green"
               content="upload media"
               icon="cloud upload"
               labelPosition="right"
+            />
+
+            <FileModal
+              modal={this.state.modal}
+              sendFileMessage={this.sendFileMessage}
+              closeModal={this.closeModal}
             />
           </Button.Group>
         </Segment>
