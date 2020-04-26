@@ -10,10 +10,9 @@ import { connect } from "react-redux";
 function App(props) {
   return (
     <Grid columns="equal" className="app" style={{ background: "#eee" }}>
-      <ColorPanel />
       <SidePanel currentUser={props.currentUser} />
       <Grid.Column style={{ marginLeft: 320 }}>
-        <Messages />
+        <Messages isPrivateChannel={props.isPrivateChannel} />
       </Grid.Column>
 
       <Grid.Column width={4}>
@@ -25,6 +24,7 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   return {
+    isPrivateChannel: state.channel.isPrivateChannel,
     currentUser: state.currentUser,
   };
 };

@@ -13,8 +13,10 @@ class Messages extends React.Component {
     messages: [],
     messagesLoading: true,
     user: null,
+    isPrivateChannel: this.props.isPrivateChannel,
     uniqueUsers: 0,
     searching: false,
+    privateMessagesRef: firebase.database().ref("privateMessages"),
     searchMessages: [],
   };
 
@@ -44,7 +46,8 @@ class Messages extends React.Component {
 
   addMessageListener = (channelId) => {
     let loadedMessages = [];
-    this.state.messagesRef.child(channelId).on("child_added", (snap) => {
+    const ref = this.getMessagesRef();
+    ref.child(channelId).on("child_added", (snap) => {
       loadedMessages.push(snap.val());
       this.setState({
         ...this.state,
@@ -72,6 +75,11 @@ class Messages extends React.Component {
     } else {
       this.setState({ ...this.state, searching: false });
     }
+  };
+
+  getMessagesRef = () => {
+    const { messagesRef, privateMessagesRef, isPrivateChannel } = this.state;
+    return isPrivateChannel ? privateMessagesRef : messagesRef;
   };
 
   displaySearchMessages = () => {
@@ -112,7 +120,10 @@ class Messages extends React.Component {
                 )}
           </Comment.Group>
         </Segment>
-        <MessageForm messagesRef={this.state.messagesRef} />
+        <MessageForm
+          messagesRef={this.state.messagesRef}
+          getMessagesRef={this.getMessagesRef}
+        />
       </React.Fragment>
     );
   }

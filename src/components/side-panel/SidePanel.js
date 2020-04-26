@@ -3,6 +3,7 @@ import { Menu } from "semantic-ui-react";
 import UserPanel from "./UserPanel";
 import Channels from "./Channels";
 import DirectMessages from "./DirectMessages";
+import { connect } from "react-redux";
 
 class SidePanel extends React.Component {
   render() {
@@ -18,10 +19,14 @@ class SidePanel extends React.Component {
         <Channels />
         <br />
         <br />
-        <DirectMessages />
+        {/* <DirectMessages currentUser={this.props.currentUser} /> */}
       </Menu>
     );
   }
 }
 
-export default SidePanel;
+const mapStateToProps = (state) => ({
+  currentUser: state.user.currentUser,
+});
+
+export default connect(mapStateToProps, {})(SidePanel);

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Comment, Image } from "semantic-ui-react";
 import moment from "moment";
+import { connect } from "react-redux";
 
-export default function Message(props) {
-  const isOwnMessage = (message, user) => user.uid === message.user.id;
+function Message(props) {
+  const [user, setUser] = useState(props.currentUser);
 
   const timeFromNow = (time) => moment(time).fromNow();
 
@@ -16,11 +17,7 @@ export default function Message(props) {
   return (
     <Comment>
       <Comment.Avatar src={props.message.user.photoURL} />
-      <Comment.Content
-        className={
-          isOwnMessage(props.message, props.user) ? "message__self" : ""
-        }
-      >
+      <Comment.Content>
         <Comment.Author as="a">{props.message.user.displayName}</Comment.Author>
         <Comment.Metadata>
           {timeFromNow(props.message.timestamp)}
@@ -35,3 +32,9 @@ export default function Message(props) {
     </Comment>
   );
 }
+
+const mapStateToProps = (state) => {
+  return { currentUser: state.user.currentUser };
+};
+
+export default connect()(Message);

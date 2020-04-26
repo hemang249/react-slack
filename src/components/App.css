@@ -11,7 +11,8 @@ body,
 }
 
 .messages {
-  height: 395px;
+  width: 100%;
+  height: 380px;
   overflow-y: scroll;
 }
 

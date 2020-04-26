@@ -7,6 +7,7 @@ import FileModal from "./FileModal";
 class MessageForm extends Component {
   state = {
     user: this.props.currentUser,
+    isPrivateChannel: this.props.isPrivateChannel,
     message: "",
     loading: false,
     currentChannel: this.props.currentChannel,
@@ -16,7 +17,12 @@ class MessageForm extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ ...this.state, currentChannel: nextProps.currentChannel });
+    this.setState({
+      ...this.state,
+      currentChannel: nextProps.currentChannel,
+      user: this.props.currentUser,
+      isPrivateChannel: this.props.isPrivateChannel,
+    });
   }
 
   handleChange = (event) => {
@@ -132,6 +138,7 @@ class MessageForm extends Component {
 const mapStateToProps = (state) => ({
   currentChannel: state.channel.currentChannel,
   currentUser: state.user.currentUser,
+  isPrivateChannel: state.channel.isPrivateChannel,
 });
 
 export default connect(mapStateToProps, {})(MessageForm);
