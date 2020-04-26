@@ -13,6 +13,9 @@ class Messages extends React.Component {
     messages: [],
     messagesLoading: true,
     user: null,
+    uniqueUsers: 0,
+    searching: false,
+    searchMessages: [],
   };
 
   componentWillUnmount() {
@@ -51,6 +54,37 @@ class Messages extends React.Component {
     });
   };
 
+  searchMessages = (searchText) => {
+    const searchMessages = [];
+    if (searchText != "") {
+      this.state.messages.map((m) => {
+        if (m.content) {
+          if (m.content.includes(searchText)) {
+            searchMessages.push(m);
+          }
+        }
+      });
+      this.setState({
+        ...this.state,
+        searchMessages: searchMessages,
+        searching: true,
+      });
+    } else {
+      this.setState({ ...this.state, searching: false });
+    }
+  };
+
+  displaySearchMessages = () => {
+    const { searchMessages } = this.state;
+    return searchMessages.length > 0 ? (
+      searchMessages.map((m) => (
+        <Message key={m.timestamp} message={m} user={this.state.user} />
+      ))
+    ) : (
+      <div>Cannot find such a message</div>
+    );
+  };
+
   displayMessages = (messages, channel) => {
     return messages.length > 0 ? (
       messages.map((m) => (
@@ -64,13 +98,18 @@ class Messages extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <MessagesHeader />
+        <MessagesHeader
+          searchMessages={this.searchMessages}
+          uniqueUsers={this.state.uniqueUsers}
+        />
         <Segment>
           <Comment.Group className="messages">
-            {this.displayMessages(
-              this.state.messages,
-              this.state.currentChannel
-            )}
+            {this.state.searching
+              ? this.displaySearchMessages()
+              : this.displayMessages(
+                  this.state.messages,
+                  this.state.currentChannel
+                )}
           </Comment.Group>
         </Segment>
         <MessageForm messagesRef={this.state.messagesRef} />

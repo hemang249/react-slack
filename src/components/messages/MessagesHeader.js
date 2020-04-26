@@ -1,15 +1,20 @@
 import React, { Component } from "react";
-import { Header, Segment, Icon, Input } from "semantic-ui-react";
+import { Header, Button, Segment, Icon, Input } from "semantic-ui-react";
 import { connect } from "react-redux";
 
 class MessagesHeader extends Component {
   state = {
     currentChannel: "",
+    searchText: "",
   };
 
   componentWillReceiveProps(nextProps) {
     this.setState({ ...this.state, currentChannel: nextProps.currentChannel });
   }
+
+  handleChange = (event) => {
+    this.setState({ ...this.state, [event.target.name]: event.target.value });
+  };
 
   render() {
     return (
@@ -26,16 +31,25 @@ class MessagesHeader extends Component {
                 this.state.currentChannel.name.toUpperCase()}
               <Icon name="star outline" color="black" />
             </span>
-
-            <Header.Subheader>2 Users</Header.Subheader>
           </Header>
           <Header floated="right">
             <Input
               size="mini"
               icon="search"
-              name="searchTerm"
+              name="searchText"
               placeholder="search messages"
+              onChange={this.handleChange}
             ></Input>
+            <br />
+            <Button
+              color="green"
+              onClick={() => {
+                this.props.searchMessages(this.state.searchText);
+              }}
+            >
+              {" "}
+              Search{" "}
+            </Button>
           </Header>
         </Segment>
       </React.Fragment>
