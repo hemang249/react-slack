@@ -127,7 +127,7 @@ class Channels extends Component {
 
     return (
       <React.Fragment>
-        <Menu.Menu style={{ textAlign: "center" }}>
+        <Menu.Menu className="menu" style={{ textAlign: "center" }}>
           <br />
 
           <Menu.Item>
